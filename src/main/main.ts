@@ -39,6 +39,12 @@ const createTray = () => {
         trayWindow.window.show();
       },
     },
+    {
+      label: 'Sair',
+      click() {
+        app.quit();
+      },
+    },
   ]);
   mainTray.setContextMenu(contextMenu);
 };

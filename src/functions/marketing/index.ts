@@ -38,7 +38,7 @@ const getNextCampaign = async (id: string) => {
   // const me = await getMe();
   // ?whatsapp=${me}
   try {
-    const result = await api.get(`/prepare-campaigns/${id}`);
+    const result = await api.get(`/prepare-campaigns/${id}?origin=app`);
     return result;
   } catch (error) {}
   return {data: null}
