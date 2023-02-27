@@ -1,0 +1,64 @@
+.errorBlockGlutoes {
+  --errorColor: #ec4444;
+  --errorBackgroundColor: #ffdcdc;
+}
+
+.errorBlockGlutoes {
+  padding: 1rem;
+  background-color: var(--errorBackgroundColor);
+  color: black;
+  justify-content: center;
+  align-items: center;
+  display: flex;
+  text-align: left;
+  line-height: 1.3;
+}
+
+.whatsPopup {
+  background: white;
+  color: #51cf50;
+  width: fit-content;
+  bottom: 55px;
+  cursor: pointer;
+  height: fit-content;
+  padding: 7px 19px;
+  z-index: 999;
+  position: absolute;
+  text-align: center;
+  font-family: sans-serif;
+  font-weight: bold;
+  border-radius: 4px;
+  font-size: 14px;
+  border: 2px solid #51cf50;
+  align-items: center;
+  display: flex;
+
+  transition: 0.5s ease;
+  animation: Slide_Up 1.5s ease;
+}
+
+.whatsPopup:hover {
+  background: #f2fff2
+}
+
+.whatsImg {
+  width: 34px;
+  height: 35px;
+  z-index: 9999;
+  vertical-align: middle;
+  border-style: none;
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+  position: relative;
+}
+
+@keyframes Slide_Up {
+  0% {
+    transform: translateY(250px);
+  }
+
+  100% {
+    transform: translateY(0);
+  }
+}

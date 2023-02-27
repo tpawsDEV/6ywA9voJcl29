@@ -1,0 +1,89 @@
+.App-glutoes-extension {
+  text-align: center;
+  background-color: #fff;
+  width: 300px;
+  height: 100vh;
+  z-index: 999999;
+  resize: horizontal;
+}
+
+body {
+  margin: 0px;
+}
+
+.App-glutoes-extension-logo {
+  height: 40vmin;
+  pointer-events: none;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .App-glutoes-extension-logo {
+    animation: App-glutoes-extension-logo-spin infinite 20s linear;
+  }
+}
+
+.App-glutoes-extension-header {
+  background-color: #282c34;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  font-size: calc(10px + 2vmin);
+  color: white;
+}
+
+.App-glutoes-extension-link {
+  color: #61dafb;
+}
+
+@keyframes App-glutoes-extension-logo-spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.extBody {
+  overflow: hidden;
+  position: relative;
+  height: calc(100vh - 50px);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.counterGlutoes {
+  display: flex;
+}
+.Glutoescounter-item {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  background: var(--white);
+}
+.labelTimerGlutoes {
+  font-size: 9px;
+  color: var(--blue-dark);
+  width: 100%;
+  font-weight: 600;
+  text-align: center;
+  background: var(--white);
+}
+
+.valueTimerGlutoes {
+  width: 100%;
+  padding: 0 0.5rem;
+  font-size: 18px;
+  color: var(--dark);
+  text-align: center;
+}
+
+@media (max-width: 500px) {
+  .valueTimerGlutoes {
+    font-size: 2.5rem;
+  }
+}
