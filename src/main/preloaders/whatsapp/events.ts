@@ -1,11 +1,13 @@
-import { clearContacts, segment, sendMessage } from 'functions/whatsapp';
+import { clearContacts, getMe, segment, sendMessage } from 'functions/whatsapp';
 import Inject from './inject';
 
 const WhatsappEvents = async (ipcRenderer: any) => {
   if (document.location.href !== 'https://web.whatsapp.com/') {
     return null;
   }
-
+  const sleep = (ms: number) => {
+    return new Promise((resolve) => setTimeout(resolve, ms));
+  };
   try {
     (function () {
       Notification = function () {} as any;
@@ -18,7 +20,7 @@ const WhatsappEvents = async (ipcRenderer: any) => {
     `<meta http-equiv="Content-Security-Policy" content="default-src 'unsafe-inline' 'unsafe-eval' 'self' * data: * blob: *;script-src 'unsafe-inline' 'unsafe-eval' 'self' * data: * blob: *;style-src 'unsafe-inline' 'unsafe-eval' 'self' * data: * blob: *;connect-src 'unsafe-inline' 'unsafe-eval' 'self' * data: * blob: *;font-src 'unsafe-inline' 'unsafe-eval' 'self' * data: * blob: *;img-src 'unsafe-inline' 'unsafe-eval' 'self' * data: * blob: *;media-src 'unsafe-inline' 'unsafe-eval' 'self' * data: * blob: *;child-src 'unsafe-inline' 'unsafe-eval' 'self' * data: * blob: *;frame-src 'unsafe-inline' 'unsafe-eval' 'self' * data: * blob: *">
   `
   );
-  ipcRenderer.once('SEND_WPP_MESSAGE', async (event: any, arg: any) => {
+  ipcRenderer.on('SEND_WPP_MESSAGE', async (event: any, arg: any) => {
     sendMessage(arg[0], arg[1], arg[2]);
   });
 
@@ -35,7 +37,10 @@ const WhatsappEvents = async (ipcRenderer: any) => {
     '[data-testid="intro-md-beta-logo-dark"], [data-testid="intro-md-beta-logo-light"], [data-asset-intro-image-light="true"], [data-asset-intro-image-dark="true"]';
   const INTRO_QRCODE_SELECTOR = 'div[data-ref] canvas';
 
-  const waitForSelector = async (selector: string, options: any) => {
+  const waitForSelector = async (
+    selector: string,
+    options: { timeout: any }
+  ) => {
     const maxTries = options.timeout / 200;
     let trier = 0;
     let element = document.querySelector(selector);
@@ -50,25 +55,28 @@ const WhatsappEvents = async (ipcRenderer: any) => {
 
   let needAuthentication = await Promise.race([
     new Promise((resolve) => {
-      waitForSelector(INTRO_IMG_SELECTOR, { timeout: 5000 })
-        .then(() => resolve(false))
+      waitForSelector(INTRO_IMG_SELECTOR, { timeout: 200000 })
+        .then((resp) => resolve(resp ? false : true))
         .catch((err) => resolve(err));
     }),
     new Promise((resolve) => {
       waitForSelector(INTRO_QRCODE_SELECTOR, {
-        timeout: 5000,
+        timeout: 200000,
       })
         .then(() => resolve(true))
         .catch((err) => resolve(err));
     }),
   ]);
-
+  console.log(needAuthentication)
   ipcRenderer.send('WPP_LOG_IN', [false]);
   if (needAuthentication) {
     const QR_CONTAINER = 'div[data-ref]';
     const QR_RETRY_BUTTON = 'div[data-ref] > span > button';
 
-    const qr_container = document.querySelector(QR_CONTAINER) as any;
+    const qr_container = (await waitForSelector(QR_CONTAINER, {
+      timeout: 100000,
+    })) as any;
+
     const qrChanged = async (qr: string) => {
       ipcRenderer.send('QR_UPDATE', [qr]);
       needAuthentication = await Promise.race([
@@ -108,9 +116,8 @@ const WhatsappEvents = async (ipcRenderer: any) => {
       attributes: true,
       attributeFilter: ['data-ref'],
     });
-
     const awaitLogIn = await waitForSelector(INTRO_IMG_SELECTOR, {
-      timeout: 100000,
+      timeout: 10000000,
     });
     if (!awaitLogIn) {
       return;
@@ -136,12 +143,16 @@ const WhatsappEvents = async (ipcRenderer: any) => {
     window.location.reload();
   }
   Inject();
-
   header?.insertAdjacentHTML(
     'beforeend',
     `<meta http-equiv="Content-Security-Policy" content="default-src 'unsafe-inline' 'unsafe-eval' 'self' * data: * blob: *;script-src 'unsafe-inline' 'unsafe-eval' 'self' * data: * blob: *;style-src 'unsafe-inline' 'unsafe-eval' 'self' * data: * blob: *;connect-src 'unsafe-inline' 'unsafe-eval' 'self' * data: * blob: *;font-src 'unsafe-inline' 'unsafe-eval' 'self' * data: * blob: *;img-src 'unsafe-inline' 'unsafe-eval' 'self' * data: * blob: *;media-src 'unsafe-inline' 'unsafe-eval' 'self' * data: * blob: *;child-src 'unsafe-inline' 'unsafe-eval' 'self' * data: * blob: *;frame-src 'unsafe-inline' 'unsafe-eval' 'self' * data: * blob: *">
   `
   );
+  await sleep(10000);
+
+  const me = await getMe();
+  ipcRenderer.send('WHATSAPP_PHONE', [me]);
+
   // clearContacts();
 };
 

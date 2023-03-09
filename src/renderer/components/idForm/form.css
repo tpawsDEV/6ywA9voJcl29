@@ -3,6 +3,24 @@
   /* margin-top: 15px; */
 }
 
+.statusConnection {
+  width: 100%;
+  padding: 15px 0px;
+  display: flex;
+  flex-direction: row;
+}
+.statusChild {
+  flex: 1;
+  align-self: center;
+}
+.statusConnectionTitle{
+font-size: 12px;
+font-weight: 600;
+}
+.statusConnectionText{
+  font-size: 10px;
+font-weight: 400;
+}
 .qrCodeDiv{
   margin-top: 15px;
 }

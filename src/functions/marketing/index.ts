@@ -34,11 +34,9 @@ const setCampaignUsage = async (
   return result.data;
 };
 
-const getNextCampaign = async (id: string) => {
-  // const me = await getMe();
-  // ?whatsapp=${me}
+const getNextCampaign = async (id: string, me:string) => {
   try {
-    const result = await api.get(`/prepare-campaigns/${id}?origin=app`);
+    const result = await api.get(`/prepare-campaigns/${id}?origin=app&whatsapp=${me}`);
     return result;
   } catch (error) {}
   return {data: null}

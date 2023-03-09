@@ -1,7 +1,15 @@
 import { contextBridge, ipcRenderer, IpcRendererEvent } from 'electron';
 import { WhatsappEvents } from './whatsapp/events';
 
-export type Channels = 'SAVE_GLUTOES_KEY' | 'QR_UPDATE' | 'WPP_LOG_IN' | "SEND_WPP_MESSAGE" | "TOGGLE_WINDOW" | "OPEN_EXTERNAL" | "window";
+export type Channels =
+  | 'WHATSAPP_PHONE'
+  | 'SAVE_GLUTOES_KEY'
+  | 'QR_UPDATE'
+  | 'WPP_LOG_IN'
+  | 'SEND_WPP_MESSAGE'
+  | 'TOGGLE_WINDOW'
+  | 'OPEN_EXTERNAL'
+  | 'window';
 
 const electronHandler = {
   ipcRenderer: {

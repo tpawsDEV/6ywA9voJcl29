@@ -1,6 +1,6 @@
 .App-glutoes-extension {
   text-align: center;
-  background-color: #fff;
+  background-color: #ffffff;
   width: 300px;
   height: 100vh;
   z-index: 999999;
@@ -82,8 +82,3 @@ body {
   text-align: center;
 }
 
-@media (max-width: 500px) {
-  .valueTimerGlutoes {
-    font-size: 2.5rem;
-  }
-}

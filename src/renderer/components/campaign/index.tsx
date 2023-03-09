@@ -17,6 +17,8 @@ interface inputProps {
   setError: React.Dispatch<React.SetStateAction<string>>;
   success: string;
   setSuccess: React.Dispatch<React.SetStateAction<string>>;
+  whatsappLoaded: boolean;
+  whatsappPhone: string;
 }
 
 function Campaign({
@@ -25,6 +27,8 @@ function Campaign({
   setError,
   success,
   setSuccess,
+  whatsappLoaded,
+  whatsappPhone,
 }: inputProps) {
   const lastSearch = useRef(new Date().getTime() as number);
   const campaigns = useRef({} as any);
@@ -147,8 +151,7 @@ function Campaign({
     }
 
     setSearchingNow(true);
-
-    const ct = (await getNextCampaign(idMarketing)).data;
+    const ct = (await getNextCampaign(idMarketing, whatsappPhone)).data;
     lastSearch.current = new Date().getTime();
 
     const campaignsServer = ct.campaigns ? ct.campaigns : [];
@@ -186,36 +189,48 @@ function Campaign({
   }, [campaignsState]);
 
   useEffect(() => {
-    let ignore = false;
+    if (whatsappLoaded && whatsappPhone && whatsappPhone != '') {
+      let ignore = false;
 
-    async function executeHook() {
-      try {
+      async function executeHook() {
         try {
-          console.log('Procura Campanha');
-          await getNxtCampaigns(idMarketing);
+          try {
+            console.log('Procura Campanha');
+            await getNxtCampaigns(idMarketing);
+          } catch (error) {
+            console.log('Erro na campanha: ');
+            console.log(error);
+          }
         } catch (error) {
-          console.log('Erro na campanha: ');
           console.log(error);
+          // console.log("Ja injetado");
         }
-      } catch (error) {
-        console.log(error);
-        // console.log("Ja injetado");
       }
-    }
 
-    if (!ignore) {
-      executeHook();
-    }
+      if (!ignore) {
+        executeHook();
+      }
 
-    return () => {
-      ignore = true;
-    };
-  }, [idMarketing]);
+      return () => {
+        ignore = true;
+      };
+    }
+  }, [idMarketing, whatsappLoaded, whatsappPhone]);
 
   const setCampaign = (campaign: any) => {
     if (campaigns.current != -1) {
       campaigns.current[campaign.id] = campaign;
     }
+  };
+
+  const getLoadingMessage = () => {
+    if (!whatsappLoaded) {
+      return 'Abrindo o Whatsapp';
+    }
+    if (whatsappPhone == '') {
+      return 'Conectando o Whatsapp';
+    }
+    return 'Buscando suas Campanhas';
   };
 
   const renderCampaignDetails = () => {
@@ -224,7 +239,7 @@ function Campaign({
       return (
         <>
           <Typography variant="h6" gutterBottom>
-            Buscando suas Campanhas
+            {getLoadingMessage()}
           </Typography>
         </>
       );

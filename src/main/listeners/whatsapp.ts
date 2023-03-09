@@ -19,6 +19,12 @@ export function sendWppMessage(window: BrowserWindow) {
   });
 }
 
+export function whatsappPhone(window: BrowserWindow) {
+    ipcMain.on('WHATSAPP_PHONE', async (event, arg) => {
+    window.webContents.send('WHATSAPP_PHONE', arg);
+  });
+}
+
 export function segmentContacts(restaurantId: string, window: BrowserWindow) {
   ipcMain.on('RECEIVE_WPP_CONTACTS', async (event, arg) => {
     const contacts = arg[0];

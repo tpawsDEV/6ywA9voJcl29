@@ -3,7 +3,7 @@
 import AppUpdater from './updater';
 import { app, Tray, Menu } from 'electron';
 import { saveGlutoesKey } from './listeners/glutoesKey';
-import { logIn, qrUpdate, sendWppMessage } from './listeners/whatsapp';
+import { logIn, qrUpdate, sendWppMessage, whatsappPhone } from './listeners/whatsapp';
 import { getAssetPath } from './util';
 import TrayWindow from './windows/tray';
 import WhatsappWindow from './windows/whatsapp';
@@ -40,8 +40,16 @@ const createTray = () => {
       },
     },
     {
+      label: 'Ver Whatsapp',
+      click() {
+        whatsappWindow.window.show();
+      },
+    },
+    {
       label: 'Sair',
       click() {
+        trayWindow.destructor();
+        whatsappWindow.destructor();
         app.quit();
       },
     },
@@ -56,22 +64,30 @@ app.setLoginItemSettings({
   openAtLogin: true,
   path: app.getPath('exe'),
 });
-app
-  .whenReady()
-  .then(() => {
-    trayWindow = new TrayWindow();
-    whatsappWindow = new WhatsappWindow();
-    new AppUpdater();
 
-    createTray();
+const gotTheLock = app.requestSingleInstanceLock();
 
-    saveGlutoesKey(trayWindow.window);
-    qrUpdate(trayWindow.window);
-    sendWppMessage(whatsappWindow.window);
-    toggleWindow(trayWindow.window);
-    openExternal();
-    logIn(trayWindow.window);
-  })
-  .catch(console.log);
+if (!gotTheLock) {
+  app.quit();
+} else {
+  app
+    .whenReady()
+    .then(() => {
+      trayWindow = new TrayWindow();
+      whatsappWindow = new WhatsappWindow();
+      new AppUpdater();
+
+      createTray();
+
+      saveGlutoesKey(trayWindow.window);
+      qrUpdate(trayWindow.window);
+      sendWppMessage(whatsappWindow.window);
+      whatsappPhone(trayWindow.window);
+      toggleWindow(trayWindow.window);
+      openExternal();
+      logIn(trayWindow.window);
+    })
+    .catch(console.log);
+}
 
 app.on('before-quit', clearServiceWorkers);

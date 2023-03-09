@@ -24,7 +24,7 @@ class TrayWindow {
       resizable: false,
       webPreferences: {
         preload: getPreloadPath(),
-        devTools: true
+        devTools: true,
       },
     });
 
@@ -38,13 +38,17 @@ class TrayWindow {
       const glutoesKey = store.get('glutoes-key');
       this.window.webContents.send('SAVE_GLUTOES_KEY', glutoesKey);
       // this.window.webContents.toggleDevTools();
-      
+
       if (!glutoesKey) {
         this.window.show();
       } else {
         // segment(glutoesKey as string, this.window)
       }
     });
+  }
+
+  public destructor() {
+    this.window.destroy();
   }
 }
 
